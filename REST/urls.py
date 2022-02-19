@@ -18,10 +18,11 @@ from django.urls import path,include
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 from accounts.views import UserViewSet
+from accounts import views
 
 router = DefaultRouter()
 router.register('signup', UserViewSet, basename='user')
-from accounts import views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),

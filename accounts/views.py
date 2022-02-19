@@ -43,3 +43,4 @@ def Employee_api(request, pk=None):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = SignUp_Serializer
+

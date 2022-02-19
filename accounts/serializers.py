@@ -17,15 +17,20 @@ class SignUp_Serializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'gender', 'password', 'password2', 'address','city','state','zip','country']
+        fields = ['username','first_name', 'last_name', 'email', 'gender', 'password', 'password2', 'address','city','state','zip','country']
 
     def validate(self, data):
         if data['password'] != data['password2']:
             raise serializers.ValidationError("Password does not match!")
+        if data['username']:
+            for i in User.objects.all():
+                if i.username == data['username']:
+                    raise serializers.ValidationError("Username is already exits!")
         return data
 
+
     def create(self, validated_data):
-        user = User.objects.create( first_name=validated_data['first_name'],last_name=validated_data['last_name'],
+        user = User.objects.create( username=validated_data['first_name'],first_name=validated_data['first_name'],last_name=validated_data['last_name'],
                                     email=validated_data['email'],gender=validated_data['gender'],
                                     address=validated_data['gender'],city=validated_data['state'],
                                     zip=validated_data['zip'],country=validated_data['country'])
