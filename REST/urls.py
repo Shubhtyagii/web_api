@@ -27,8 +27,6 @@ router.register('signup', UserViewSet, basename='user')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('rest_framework.urls')),
-    path('api/token/',jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/',jwt_views.TokenRefreshView.as_view(),name='token_refresh'),
     path('details/', views.Employee_api, name='Employee_api'),
-    # path('login/', views.login_view, name='login_view'),
+    path('login/', views.login_view, name='login_view'),
 ] + router.urls

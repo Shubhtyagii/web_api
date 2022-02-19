@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-REFRESH_TOKEN_SECRET='hfkjdfhd_2jndsnn46r78+dcdn=jklcdc33'
+# REFRESH_TOKEN_SECRET='hfkjdfhd_2jndsnn46r78+dcdn=jklcdc33'
 
 # Application definition
 
