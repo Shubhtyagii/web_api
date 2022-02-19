@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.contrib.auth import get_user_model, authenticate
-from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import permission_classes, api_view, authentication_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -9,7 +8,6 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from accounts.models import Employee
 from accounts.serializers import SignUp_Serializer, EmployeeSerializer, User_loginSerializer
 from accounts.utils import get_tokens_for_user
-
 User = get_user_model()
 from rest_framework import viewsets
 from rest_framework import exceptions
@@ -18,34 +16,31 @@ from rest_framework.permissions import AllowAny
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-@ensure_csrf_cookie
 def login_view(request):
-    email = request.data.get('email')
+    username = request.data.get('username')
     password = request.data.get('password')
     response = Response()
-    # user = authenticate(email=email,password=password)
-    # print(user,'///')
-    if (email is None) or (password is None):
+    if (username is None) or (password is None):
         raise exceptions.AuthenticationFailed(
             'email and password required')
 
-    user = User.objects.filter(email=email).first()
+    if "@" in username:
+        user = authenticate(email=username,password=password)
+        print(user,'1111')
+    else:
+        user = authenticate(username=username, password=password)
+        print(user, '22')
 
-    if user is None:
-        raise exceptions.AuthenticationFailed('user not found')
-
-    if not user.check_password(password):
-        raise exceptions.AuthenticationFailed('wrong password')
+    # if not user.check_password(password):
+    #     raise exceptions.AuthenticationFailed('wrong password')
 
     token = get_tokens_for_user(user)
-    # print(token['access'])
     serialized_user = User_loginSerializer(user)
     response.data = {
         'access_token': token['access'],
         'refresh_token': token['refresh'],
         'user': serialized_user.data,
     }
-
     return response
 
 

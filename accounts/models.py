@@ -37,7 +37,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now, null=True)
-    last_login = models.DateTimeField(null=True)
+    last_login = models.DateTimeField(null=True,blank=True)
     address = models.CharField(default="", max_length=50, blank=True, null=True)
     city = models.CharField(max_length=200, null=True, blank=True)
     state = models.CharField(max_length=200, null=True, blank=True)
