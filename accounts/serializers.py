@@ -10,6 +10,12 @@ User = get_user_model()
 MIN_LENGTH = 8
 
 
+class User_loginSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+
+
 class SignUp_Serializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=MIN_LENGTH, required=True,
                                      validators=[validate_password])
@@ -17,7 +23,8 @@ class SignUp_Serializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username','first_name', 'last_name', 'email', 'gender', 'password', 'password2', 'address','city','state','zip','country']
+        fields = ['username', 'first_name', 'last_name', 'email', 'gender', 'password', 'password2', 'address', 'city',
+                  'state', 'zip', 'country']
 
     def validate(self, data):
         if data['password'] != data['password2']:
@@ -28,12 +35,12 @@ class SignUp_Serializer(serializers.ModelSerializer):
                     raise serializers.ValidationError("Username is already exits!")
         return data
 
-
     def create(self, validated_data):
-        user = User.objects.create( username=validated_data['first_name'],first_name=validated_data['first_name'],last_name=validated_data['last_name'],
-                                    email=validated_data['email'],gender=validated_data['gender'],
-                                    address=validated_data['gender'],city=validated_data['state'],
-                                    zip=validated_data['zip'],country=validated_data['country'])
+        user = User.objects.create(username=validated_data['first_name'], first_name=validated_data['first_name'],
+                                   last_name=validated_data['last_name'],
+                                   email=validated_data['email'], gender=validated_data['gender'],
+                                   address=validated_data['gender'], city=validated_data['state'],
+                                   zip=validated_data['zip'], country=validated_data['country'])
         user.set_password(validated_data['password'])
         user.save()
         return user
