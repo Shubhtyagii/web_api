@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from accounts.views import UserViewSet
 from accounts import views
 router = DefaultRouter()
+
 router.register('signup', UserViewSet, basename='user')
 
 
