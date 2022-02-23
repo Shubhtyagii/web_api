@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.contrib.auth.models import PermissionsMixin
 
 # Create your models here.
+from .utils import generate_ref_code
+
 ZIP_MSG = _(u'Must be valid zipcode in formats 12345 or 12345-1234')
 PHONE_REGEX_MSG = _("Phone number must be entered in the format: '(999) 999-9999'. Up to 15 digits allowed")
 
@@ -27,33 +29,42 @@ GENDER_CHOICES = (
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    # username = models.CharField(max_length=255,unique=True)
-    email = models.EmailField(max_length=255,unique=True)
-    first_name = models.CharField(max_length=200,blank=True)
-    last_name = models.CharField(max_length=200, blank=True)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,null=True,blank=True)
+    username = models.CharField(max_length=255, unique=True)
+    email = models.EmailField(max_length=255, unique=True)
+    first_name = models.CharField(max_length=200, blank=True,null=True)
+    last_name = models.CharField(max_length=200, blank=True,null=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
     mobile_phone = models.CharField(max_length=12, validators=[phone_regex], null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now, null=True)
-    last_login = models.DateTimeField(null=True)
+    last_login = models.DateTimeField(null=True, blank=True)
     address = models.CharField(default="", max_length=50, blank=True, null=True)
-    city = models.CharField(max_length=200, null=True,blank=True)
-    state = models.CharField(max_length=200, null=True,blank=True)
+    city = models.CharField(max_length=200, null=True, blank=True)
+    state = models.CharField(max_length=200, null=True, blank=True)
     zip = models.CharField(max_length=10, null=True, blank=True, validators=[zip_regex], default="")
-    country = models.CharField(max_length=200, null=True,blank=True)
+    country = models.CharField(max_length=200, null=True, blank=True)
+    my_ref_code = models.CharField(max_length=6, null=True, blank=True,unique=True)
+    my_ref_count = models.PositiveIntegerField(default=0, blank=True, null=True)
+    referral_code = models.CharField(max_length=6, blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = UserManager()
 
-
     def __str__(self):
         return self.email
+
+    def save(self, *args, **kwargs):
+        if not self.my_ref_code:
+            self.my_ref_code = generate_ref_code()
+        super().save(*args, **kwargs)
 
 
 class Employee(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField()
+
+
